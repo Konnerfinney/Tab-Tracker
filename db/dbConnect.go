@@ -29,19 +29,81 @@ func ConnectDB() *sql.DB {
 	return db
 }
 
-func CreateTable(db *sql.DB) {
-	query := `
+func CreateTables(db *sql.DB) {
+	userTable := `
     CREATE TABLE IF NOT EXISTS users (
-        id SERIAL PRIMARY KEY,
-        provider_id TEXT NOT NULL,
+        user_id SERIAL PRIMARY KEY,
+        provider_id TEXT UNIQUE NOT NULL,
+        username TEXT NOT NULL,
         first_name TEXT NOT NULL,
         last_name TEXT NOT NULL,
-        email TEXT NOT NULL UNIQUE,
-        provider TEXT NOT NULL
+        email TEXT UNIQUE NOT NULL,
+        provider TEXT NOT NULL,
+        is_proxy_user BOOLEAN DEFAULT FALSE,
+        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
     );`
-	_, err := db.Exec(query)
-	if err != nil {
-		log.Fatalf("Could not create table: %v", err)
+
+	userBalanceTable := `
+    CREATE TABLE IF NOT EXISTS user_balances (
+        balance_id SERIAL PRIMARY KEY,
+        user1_id INTEGER NOT NULL,
+        user2_id INTEGER NOT NULL,
+        net_balance DECIMAL NOT NULL,
+        FOREIGN KEY (user1_id) REFERENCES users(user_id),
+        FOREIGN KEY (user2_id) REFERENCES users(user_id),
+        UNIQUE (user1_id, user2_id)
+    );`
+
+	userTransactionTable := `
+    CREATE TABLE IF NOT EXISTS user_transactions (
+        transaction_id SERIAL PRIMARY KEY,
+        creditor_id INTEGER NOT NULL,
+        debtor_id INTEGER NOT NULL,
+        amount DECIMAL NOT NULL,
+        description TEXT,
+        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+        FOREIGN KEY (creditor_id) REFERENCES users(user_id),
+        FOREIGN KEY (debtor_id) REFERENCES users(user_id)
+    );`
+
+	transactionRequestTable := `
+    CREATE TABLE IF NOT EXISTS transaction_requests (
+        request_id SERIAL PRIMARY KEY,
+        transaction_id INTEGER NOT NULL,
+        requester_id INTEGER NOT NULL,
+        requestee_id INTEGER NOT NULL,
+        request_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+        status TEXT NOT NULL,
+        response_date TIMESTAMP,
+        FOREIGN KEY (transaction_id) REFERENCES user_transactions(transaction_id),
+        FOREIGN KEY (requester_id) REFERENCES users(user_id),
+        FOREIGN KEY (requestee_id) REFERENCES users(user_id)
+    );`
+
+	interactionTable := `
+    CREATE TABLE IF NOT EXISTS interactions (
+        interaction_id SERIAL PRIMARY KEY,
+        interaction_starter INTEGER NOT NULL,
+        interaction_receiver INTEGER NOT NULL,
+        interaction_count INTEGER DEFAULT 0,
+        last_interaction_timestamp TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+        FOREIGN KEY (interaction_starter) REFERENCES users(user_id),
+        FOREIGN KEY (interaction_receiver) REFERENCES users(user_id)
+    );`
+
+	tables := []string{
+		userTable,
+		userBalanceTable,
+		userTransactionTable,
+		transactionRequestTable,
+		interactionTable,
 	}
-	fmt.Println("Table created successfully!")
+
+	for _, table := range tables {
+		_, err := db.Exec(table)
+		if err != nil {
+			log.Fatalf("Could not create table: %v", err)
+		}
+	}
+	fmt.Println("Tables created successfully!")
 }
