@@ -17,23 +17,14 @@ func main() {
 	defer database.Close()
 
 	// Ensure the database has the required tables
-	db.CreateTable(database)
+	db.CreateTables(database)
 	// Optionally insert test records
 	// db.InsertTestRecords(database)
 
 	// Initialize the authentication system
 	auth.SetupAuth()
 
-	// Create a new router
-	r := mux.NewRouter()
-
-	// Define your routes here
-	r.HandleFunc("/", HomeHandler).Methods("GET")
-	r.HandleFunc("/users/{userID}", UserHandler).Methods("GET")
-
-	// Authentication routes
-	r.HandleFunc("/auth/{provider}/callback", auth.AuthenticateHandler).Methods("GET")
-	r.HandleFunc("/auth/{provider}", auth.AuthenticateHandler).Methods("GET")
+	r := NewRouter()
 
 	// Start the server
 	log.Println("listening on localhost:3000")
