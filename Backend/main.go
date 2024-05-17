@@ -19,16 +19,15 @@ func main() {
 	// Ensure the database has the required tables
 	db.CreateTables(database)
 	// Optionally insert test records
+
 	// db.InsertTestRecords(database)
 
 	// Initialize the authentication system
 	auth.SetupAuth()
 
 	r := NewRouter()
-
-	// Start the server
-	log.Println("listening on localhost:3000")
-	http.ListenAndServe(":3000", r)
+	log.Println("Starting server on :3000")
+	log.Fatal(http.ListenAndServe(":3000", r))
 }
 
 func HomeHandler(w http.ResponseWriter, r *http.Request) {

@@ -1,0 +1,6 @@
+transaction_id,creditor_id,debtor_id,amount,description,created_at
+1,1,2,50.00,Dinner payment,2023-05-16T10:00:00Z
+2,2,3,100.00,Lunch payment,2023-05-16T10:00:00Z
+3,3,4,75.00,Taxi fare,2023-05-16T10:00:00Z
+4,4,5,30.00,Coffee payment,2023-05-16T10:00:00Z
+5,5,1,150.00,Movie tickets,2023-05-16T10:00:00Z

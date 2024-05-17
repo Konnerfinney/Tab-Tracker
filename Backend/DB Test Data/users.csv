@@ -1,0 +1,6 @@
+user_id,provider_id,username,first_name,last_name,email,provider,is_proxy_user,created_at
+1,google-12345,john_doe,John,Doe,john.doe@example.com,google,false,2023-05-16T10:00:00Z
+2,google-67890,jane_doe,Jane,Doe,jane.doe@example.com,google,false,2023-05-16T10:00:00Z
+3,google-54321,alice_smith,Alice,Smith,alice.smith@example.com,google,false,2023-05-16T10:00:00Z
+4,google-13579,bob_jones,Bob,Jones,bob.jones@example.com,google,false,2023-05-16T10:00:00Z
+5,google-24680,charlie_brown,Charlie,Brown,charlie.brown@example.com,google,false,2023-05-16T10:00:00Z
